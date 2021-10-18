@@ -10,13 +10,21 @@ a mapping between a reference channel (pick the best one) and the other
 channels.
 
 These files are slightly out of context here as they are part of a bigger
-toolbox (DOTTER) that might be released at some time point. To use them with
+toolbox (DOTTER) which also contains a GUI.
+
+
+To use these files with
 MATLAB, it might be a good idea to add the corresponding folder to the path,
 i.e.
 
 ``` MATLAB
 addpath('~/where/i/keep/df_cc/')
 ```
+
+Note, there is no code to extract dots from images here, and for any
+practical usage, the input should be fitted coordinates. For exploring these
+functions, a good starting point might be `df_cc_demo1.m`.
+
 
 # Files
 ## Create a correction (`.cc`) file:
@@ -26,6 +34,9 @@ Uses the following functions:
  - `df_cc_create` -- find the transformation between two or more channels.
  - `df_cc_view` -- metrics about the correction results.
 
+Note: the `.cc` files used to store data are just normal `.mat` files
+that can be loaded with the `-mat` switch to `load`.
+
 ## Correct dots
  - `df_cc_apply_dots` -- transform dots to match a reference channels
 
@@ -34,8 +45,8 @@ Uses the following functions:
  - `df_cc_apply_image_folder` -- correct all images in a folder
 
 ## Demos/tests
- - `df_cc_demo` -- demo using a constant shift / dot correction.
- - `df_cc_ut` -- unit tests
+ - `df_cc_demo1` -- demo using a constant shift / dot correction.
+ - `df_cc_ut` -- some unit tests
 
 ## Utility files
 These files are used by the other scripts:
