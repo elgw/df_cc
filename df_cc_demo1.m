@@ -60,4 +60,4 @@ end
 
 legend({'Reference channel', 'Other channel', 'Corrected'})
 axis equal
-title('demo1, a shift')
+title('demo1: constant shift')

@@ -36,6 +36,7 @@ for kk = 1:numel(varargin)
         % Return default settings
         s.filename = [];
         s.pixelsize = [100, 100, 200];
+        s.plot = 0;
         varargout{1} = s;
         return
     end
@@ -93,46 +94,48 @@ for aa = 1:size(D,1)
                 
         Ft = zeros(size(MXY1,1), 2);
         Ft(:,1)=MXY1*Cx{aa,bb};
-        Ft(:,2)=MXY1*Cy{aa,bb};        
-        Ft(:,3) = (Daa(:,3)+dz{aa,bb})*300/130;
+        Ft(:,2)=MXY1*Cy{aa,bb};
+        
+        aniso = s.pixelsize(3)/s.pixelsize(1);
+        Ft(:,3) = (Daa(:,3)+dz{aa,bb})*aniso;
         
         D2 = df_cc_eudist(Ft(:,1:2), Dbb(:,1:2));
-        D3 = df_cc_eudist(Ft(:,1:3), [Dbb(:,1:2), Dbb(:,3)*300/130]);
+        D3 = df_cc_eudist(Ft(:,1:3), [Dbb(:,1:2), Dbb(:,3)*aniso]);
         D20 = df_cc_eudist(Daa(:,1:2), Dbb(:,1:2));
-        D30 = df_cc_eudist([Daa(:, 1:2), 300/130*Daa(:,3)], [Dbb(:,1:2), Dbb(:,3)*300/130]);
+        D30 = df_cc_eudist([Daa(:, 1:2), aniso*Daa(:,3)], [Dbb(:,1:2), Dbb(:,3)*aniso]);
         
-        if 0
+        if s.plot
            error_before_2 = D20;
            error_after_xy = D2;
            error_before_xyz = D30;
            error_after_xyz = D3;
            
             figure,             
-            subplot(2,2,1), histogram(130*error_before_2)
+            subplot(2,2,1), histogram(s.pixelsize(1)*error_before_2)
             title('Before. XY')
             xlabel('distance [nm]')
             ylabel('# bead pairs')
-            legend({sprintf('mean: %1.f nm', mean(130*error_before_2) )});
+            legend({sprintf('mean: %1.f nm', mean(s.pixelsize(1)*error_before_2) )});
             
-            subplot(2,2,2), histogram(130*error_after_xy)
+            subplot(2,2,2), histogram(s.pixelsize(1)*error_after_xy)
             title('After. XY')
             xlabel('distance [nm]')
             ylabel('# bead pairs')
-            legend({sprintf('mean: %1.f nm', mean(130*error_after_xy) )});
+            legend({sprintf('mean: %1.f nm', mean(s.pixelsize(1)*error_after_xy) )});
             
             subplot(2,2,3), 
-            histogram(130*error_before_xyz)
+            histogram(s.pixelsize(1)*error_before_xyz)
             title('Before. XYZ')
             xlabel('distance [nm]')
             ylabel('# bead pairs')
-            legend({sprintf('mean: %1.f nm', mean(error_before_xyz*130) )});
+            legend({sprintf('mean: %1.f nm', mean(error_before_xyz*s.pixelsize(1)) )});
             
             subplot(2,2,4), 
-            histogram(130*error_after_xyz)
+            histogram(s.pixelsize(1)*error_after_xyz)
             title('After. XYZ')
             xlabel('distance [nm]')
             ylabel('# bead pairs')
-            legend({sprintf('mean: %1.f nm', mean(error_after_xyz*130) )});
+            legend({sprintf('mean: %1.f nm', mean(error_after_xyz*s.pixelsize(1)) )});
             dprintpdf(sprintf('%s_vs_%s', channels{aa}, channels{bb}), '--publish')
         end
         
@@ -160,7 +163,8 @@ end
 if isfield(s, 'filename')
     if numel(s.filename) > 0
         fprintf('Writing to %s\n', s.filename)
-        save(s.filename, 'Cx', 'Cy', 'dz', 'E', 'channels', 'M', 'E0', 'N', 'E3');
+        M.pixelsize = s.pixelsize;         
+        save(s.filename, 'Cx', 'Cy', 'dz', 'E', 'channels', 'M', 'E0', 'N', 'E3', '-v7.3');
         varargout{1} = s.filename;
     end
 else

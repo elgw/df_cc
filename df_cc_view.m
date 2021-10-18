@@ -21,6 +21,11 @@ E = cc.E;
 fprintf('\ncc file: %s\n', filename);
 fprintf('created %s with DOTTER %s\n', M.creationDate, M.dotterVersion);
 
+if isfield(M, 'pixelsize')
+    psize = M.pixelsize;
+    fprintf('\n\n Pixel size: %.1f x %.1f %.1f nm', psize(1), psize(2), psize(3));
+end
+
 fprintf('\n\n2D MSE Errors after correction (pixels):\n\n')
 TE = array2table(E, 'VariableNames', channels, 'RowNames', channels);
 disp(TE);
